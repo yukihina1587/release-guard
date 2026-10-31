@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "target": {
+    "baseUrl": "https://staging.example.com",
+    "assetOrigins": ["https://staging.example.com"]
+  },
+  "releaseIdentity": {
+    "selector": "meta[name='release-guard-build']",
+    "attribute": "content",
+    "expectedFromEnv": "RELEASE_ID"
+  },
+  "build": {
+    "adapter": "vite",
+    "directory": "../dist",
+    "manifest": "../dist/.vite/manifest.json",
+    "publicBase": "/"
+  },
+  "cloudfront": { "mode": "disabled" },
+  "timeouts": {
+    "deploymentSeconds": 1200,
+    "publicationSeconds": 180,
+    "actionSeconds": 15,
+    "totalSeconds": 1800
+  },
+  "journeys": [
+    {
+      "id": "orders-navigation",
+      "startPath": "/",
+      "ready": { "testId": "home-ready" },
+      "lazyAssetPattern": "/assets/Orders-*.js",
+      "continuity": "preserve-document",
+      "steps": [
+        { "action": "click", "testId": "orders-link" },
+        { "action": "expectVisible", "testId": "orders-page" }
+      ]
+    }
+  ],
+  "report": { "directory": "../release-guard-results" }
+}

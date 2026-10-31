@@ -1,0 +1,281 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "target": {
+      "type": "object",
+      "properties": {
+        "baseUrl": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "assetOrigins": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          }
+        }
+      },
+      "required": [
+        "baseUrl",
+        "assetOrigins"
+      ],
+      "additionalProperties": false
+    },
+    "releaseIdentity": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "attribute": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,80}$"
+        },
+        "expectedFromEnv": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,80}$"
+        }
+      },
+      "required": [
+        "selector",
+        "attribute",
+        "expectedFromEnv"
+      ],
+      "additionalProperties": false
+    },
+    "build": {
+      "type": "object",
+      "properties": {
+        "adapter": {
+          "const": "vite"
+        },
+        "directory": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "manifest": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "publicBase": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        }
+      },
+      "required": [
+        "adapter",
+        "directory",
+        "manifest",
+        "publicBase"
+      ],
+      "additionalProperties": false
+    },
+    "cloudfront": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "enum": [
+            "disabled",
+            "optional",
+            "required"
+          ]
+        },
+        "distributionIdFromEnv": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,80}$"
+        }
+      },
+      "required": [
+        "mode"
+      ],
+      "additionalProperties": false
+    },
+    "timeouts": {
+      "type": "object",
+      "properties": {
+        "deploymentSeconds": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 86400
+        },
+        "publicationSeconds": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 86400
+        },
+        "actionSeconds": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 86400
+        },
+        "totalSeconds": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 86400
+        }
+      },
+      "required": [
+        "deploymentSeconds",
+        "publicationSeconds",
+        "actionSeconds",
+        "totalSeconds"
+      ],
+      "additionalProperties": false
+    },
+    "auth": {
+      "type": "object",
+      "properties": {
+        "storageStateFile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        }
+      },
+      "required": [
+        "storageStateFile"
+      ],
+      "additionalProperties": false
+    },
+    "journeys": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{1,80}$"
+          },
+          "startPath": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "ready": {
+            "type": "object",
+            "properties": {
+              "testId": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_-]{1,80}$"
+              }
+            },
+            "required": [
+              "testId"
+            ],
+            "additionalProperties": false
+          },
+          "lazyAssetPattern": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "continuity": {
+            "const": "preserve-document"
+          },
+          "steps": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 20,
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "enum": [
+                        "click",
+                        "expectVisible"
+                      ]
+                    },
+                    "testId": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9_-]{1,80}$"
+                    }
+                  },
+                  "required": [
+                    "action",
+                    "testId"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "const": "expectText"
+                    },
+                    "testId": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9_-]{1,80}$"
+                    },
+                    "text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048
+                    }
+                  },
+                  "required": [
+                    "action",
+                    "testId",
+                    "text"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "startPath",
+          "ready",
+          "lazyAssetPattern",
+          "continuity",
+          "steps"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "report": {
+      "type": "object",
+      "properties": {
+        "directory": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        }
+      },
+      "required": [
+        "directory"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "target",
+    "releaseIdentity",
+    "build",
+    "cloudfront",
+    "timeouts",
+    "journeys",
+    "report"
+  ],
+  "additionalProperties": false
+}

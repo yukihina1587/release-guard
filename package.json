@@ -1,0 +1,37 @@
+{
+  "name": "release-guard-local",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CloudFront release continuity checks",
+  "type": "module",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=24"
+  },
+  "bin": {
+    "release-guard": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import ./scripts/local-browser-env.mjs --test --test-concurrency=1 tests/*.test.ts",
+    "test:cloudfront": "node --import ./scripts/local-browser-env.mjs --test tests/cloudfront.test.ts",
+    "test:coverage": "node --import ./scripts/local-browser-env.mjs --experimental-test-coverage --test-coverage-include='src/**/*.ts' --test-coverage-lines=80 --test-coverage-functions=80 --test-coverage-branches=80 --test --test-concurrency=1 tests/*.test.ts",
+    "browser:install": "playwright install chromium",
+    "browser:deps-local": "node scripts/browser-deps-local.mjs",
+    "schema": "node scripts/schema.mjs",
+    "schema:check": "node scripts/schema.mjs --check",
+    "demo": "node --import ./scripts/local-browser-env.mjs examples/demo.ts",
+    "validate": "node src/cli.ts validate",
+    "start": "node --import ./scripts/local-browser-env.mjs src/cli.ts run"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cloudfront": "3.1160.0",
+    "ajv": "8.20.0",
+    "playwright": "1.64.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "typescript": "7.0.2"
+  }
+}
